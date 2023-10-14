@@ -189,7 +189,7 @@ HairVertexWS GetHairVertexWS_Live(in float4 packedID, in float2 packedUV)
 			sincos((0.5 - decodedTubularUV.x) * 6.2831853, vertexOffset2D.y, vertexOffset2D.x);
 
 			// calc offset in world space
-			float radius = 0.5 * _GroupMaxParticleDiameter;
+			float radius = (0.5 * _GroupMaxParticleDiameter * (1.0f - decodedTubularUV.y));
 
 			if (_DecodeVertexCount == 2)
 			{
