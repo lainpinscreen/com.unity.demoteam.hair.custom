@@ -1,4 +1,4 @@
-﻿#pragma warning disable 0414 // some fields are unused in case of disabled optional features
+#pragma warning disable 0414 // some fields are unused in case of disabled optional features
 
 #define SUPPORT_CONTENT_UPGRADE
 
@@ -313,7 +313,9 @@ namespace Unity.DemoTeam.Hair
 			public StrandScale strandScale;
 			[Range(0.01f, 100.0f), Tooltip("Strand diameter (in millimeters)")]
 			public float strandDiameter;
-			[Range(0.0f, 100.0f), Tooltip("Strand margin (in millimeters)")]
+            [Range(0.01f, 10.0f), Tooltip("Strand length scale")]
+            public float strandLengthScale;
+            [Range(0.0f, 100.0f), Tooltip("Strand margin (in millimeters)")]
 			public float strandMargin;
 
 			[LineHeader("Geometry")]
@@ -332,7 +334,8 @@ namespace Unity.DemoTeam.Hair
 
 				strandScale = StrandScale.Fixed,
 				strandDiameter = 1.0f,
-				strandMargin = 0.0f,
+                strandLengthScale = 1.0f,
+                strandMargin = 0.0f,
 
 				staging = true,
 				stagingSubdivision = 0,
@@ -1339,6 +1342,7 @@ namespace Unity.DemoTeam.Hair
 			materialInstance.SetTexture("_UntypedVolumeDensity", volumeData.volumeDensity);
 			materialInstance.SetTexture("_UntypedVolumeVelocity", volumeData.volumeVelocity);
 			materialInstance.SetTexture("_UntypedVolumeScattering", volumeData.volumeScattering);
+			materialInstance.SetFloat("_LengthModifier", settingsStrands.strandLengthScale);
 
 			switch (settingsSystem.strandRenderer)
 			{
