@@ -46,6 +46,9 @@ int _DecodeVertexWidth;
 int _DecodeVertexComponentValue;
 int _DecodeVertexComponentWidth;
 
+// Added value for length mod
+float _LengthModifier;
+
 float3 GetStrandDebugColor(in uint strandIndex)
 {
 	uint strandIndexLo = _LODGuideIndex[(_LODIndexLo * _StrandCount) + strandIndex];
@@ -169,9 +172,15 @@ HairVertexWS GetHairVertexWS_Live(in float4 packedID, in float2 packedUV)
 	const uint i_head = strandParticleBegin;
 	const uint i_tail = strandParticleEnd - strandParticleStride;
 
-	float3 p = LoadPosition(i);
-	float3 r0 = (i == i_head) ? LoadPosition(i_next) - p : p - LoadPosition(i_prev);
-	float3 r1 = (i == i_tail) ? r0 /* ............... */ : LoadPosition(i_next) - p;
+	float3 pt = LoadPosition(i);
+	float3 r0 = (i == i_head) ? LoadPosition(i_next) - pt : pt - LoadPosition(i_prev);
+	float3 r1 = (i == i_tail) ? r0 /* ............... */ : LoadPosition(i_next) - pt;
+	
+	// get length mod prerequisites
+    float3 pr = LoadPosition(i_head);
+    float3 ptrs = pt - pr;
+	// Add Length Modifier and return to correct space
+    float3 p = (ptrs * _LengthModifier) + pr;
 
 	float3 curvePositionRWS = HAIR_VERTEX_IMPL_WS_POS_TO_RWS(p);
 	float3 curvePositionRWSPrev = HAIR_VERTEX_IMPL_WS_POS_TO_RWS(LoadPositionPrev(i));
@@ -206,7 +215,8 @@ HairVertexWS GetHairVertexWS_Live(in float4 packedID, in float2 packedUV)
 				vertexOffsetWS =
 					(radius) * vertexNormalWS;
 			}
-		}
+
+        }
 	}
 
 	float3 vertexPositionWS = curvePositionRWS + vertexOffsetWS;
